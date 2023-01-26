@@ -1,0 +1,80 @@
+service spectrum /vendor/bin/sh /vendor/etc/init/hw/underground/init.spectrum.sh
+	class late_start
+	user root
+	disabled
+	oneshot
+	seclabel u:r:magisk:s0
+
+service post-boot /vendor/bin/sh /vendor/etc/init/hw/underground/init.post_boot.sh
+	class late_start
+	user root
+	disabled
+	oneshot
+	seclabel u:r:magisk:s0
+	
+on init
+    # Mount and use blkio cgroup
+    mkdir /dev/blkio
+    mount cgroup none /dev/blkio blkio
+    chown system system /dev/blkio
+    chown system system /dev/blkio/tasks
+    chmod 0664 /dev/blkio/tasks
+    mkdir /dev/blkio/bg 0755 system system
+    chown system system /dev/blkio/bg/tasks
+    chmod 0664 /dev/blkio/bg/tasks
+    write /dev/blkio/blkio.weight 1000
+    write /dev/blkio/bg/blkio.weight 100
+
+    # Boot time fs tune
+    write /sys/block/mmcblk0/queue/scheduler cfq
+    write /sys/block/mmcblk0/queue/iosched/slice_idle 0
+    write /sys/block/mmcblk0/queue/iosched/iostats 0
+    write /sys/block/mmcblk0/queue/read_ahead_kb 2048
+    write /sys/block/mmcblk0/queue/nr_requests 256
+    
+on property:init.svc.vendor.qcom-post-boot=stopped
+    start post-boot
+    start spectrum
+    
+on property:init.svc.qcom-post-boot=stopped
+    start post-boot
+    start spectrum
+    
+on property:sys.boot_completed=1
+    # Enable Spectrum and FKM profiles support
+    setprop spectrum.support 1
+    setprop fku.profiles 1
+
+    # Add kernel name
+    setprop persist.spectrum.kernel Underground
+
+# Balance (default profile)
+on property:persist.spectrum.profile=0
+    start spectrum
+    
+# Performance
+on property:persist.spectrum.profile=1
+    start spectrum
+
+# Battery
+on property:persist.spectrum.profile=2
+    start spectrum
+
+# Gaming
+on property:persist.spectrum.profile=3
+    start spectrum
+
+#
+# FKM
+#
+# Power saving profile
+on property:fku.perf.profile=0
+    setprop persist.spectrum.profile 2
+
+# Balance (FK defaults)
+on property:fku.perf.profile=1
+    setprop persist.spectrum.profile 0
+
+# Performance
+on property:fku.perf.profile=2
+    setprop persist.spectrum.profile 3
