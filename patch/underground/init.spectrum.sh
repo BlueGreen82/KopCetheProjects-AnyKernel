@@ -57,8 +57,8 @@ if [[ $boot_completed -eq 1 ]]; then
     	write /sys/module/cpu_boost/parameters/input_boost_freq 1036800;
     	write /sys/module/cpu_boost/parameters/input_boost_ms 1000;
     	write /sys/class/kgsl/kgsl-3d0/idle_timer 80;
-    	write /sys/class/kgsl/kgsl-3d0/max_gpuclk 650000000;
-    	write /sys/class/kgsl/kgsl-3d0/devfreq/max_freq 650000000;
+    	write /sys/class/kgsl/kgsl-3d0/max_gpuclk 725000000;
+    	write /sys/class/kgsl/kgsl-3d0/devfreq/max_freq 725000000;
     	write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 133330000;
     	write /sys/class/kgsl/kgsl-3d0/min_clock_mhz 133;
     	write /sys/class/kgsl/kgsl-3d0/default_pwrlevel 5;
@@ -79,8 +79,8 @@ if [[ $boot_completed -eq 1 ]]; then
     	write /sys/module/cpu_boost/parameters/input_boost_freq 1401600;
     	write /sys/module/cpu_boost/parameters/input_boost_ms 1250;
     	write /sys/class/kgsl/kgsl-3d0/idle_timer 80;
-    	write /sys/class/kgsl/kgsl-3d0/max_gpuclk 650000000;
-    	write /sys/class/kgsl/kgsl-3d0/devfreq/max_freq 650000000;
+    	write /sys/class/kgsl/kgsl-3d0/max_gpuclk 725000000;
+    	write /sys/class/kgsl/kgsl-3d0/devfreq/max_freq 725000000;
     	write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 133330000;
     	write /sys/class/kgsl/kgsl-3d0/min_clock_mhz 133;
     	write /sys/class/kgsl/kgsl-3d0/default_pwrlevel 5;

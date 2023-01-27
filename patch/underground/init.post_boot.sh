@@ -7,15 +7,31 @@ INCFOLDER=${FULLPATH%/*}
 . $INCFOLDER/init.helper.sh;
 
 # Remove scripts with unknown kernel
-on_remove_unknown_kernel() {
+remove_on_unknown_kernel() {
     kernel=`cat /proc/sys/kernel/osrelease`;
     kernelstr=${kernel:9:11};
 
     if [[ "$kernelstr" != "Underground" ]]; then
         remount_rw_vendor;
-        remove_vendor_scripts;
-        restore_file /vendor/etc/init/hw/init.target.rc;
+        remove_ug_scripts;
+        restore_rom_init;
         remount_ro_vendor;
+    fi;
+}
+
+# Set default spectrum property 
+check_or_set_spectrum() {
+    android="$(getprop ro.build.version.sdk)";
+    value="persist.spectrum.profile";
+
+    if [[ $android -ge 28 ]]; then
+        if (! (grep -q $value /data/property/persistent_properties)); then
+            setprop persist.spectrum.profile 0;
+        fi;
+    else
+        if [ ! -f /data/property/persist.spectrum.profile ]; then
+            setprop persist.spectrum.profile 0;
+        fi;
     fi;
 }
 
@@ -77,7 +93,7 @@ reduce_yellow_flashlight() {
     write /sys/devices/soc/qpnp-flash-led-25/leds/led:torch_1/max_brightness 20;
 }
 
-on_remove_unknown_kernel;
+remove_on_unknown_kernel;
 check_or_set_spectrum;
 configure_zram;
 configure_lmk;

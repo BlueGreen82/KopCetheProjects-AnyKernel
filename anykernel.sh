@@ -27,8 +27,7 @@ set_perm_recursive 0 0 750 750 $ramdisk/init*;
 }
 
 # Import functions/variables and setup patching
-. tools/ak3-core.sh && attributes;
-. tools/ak3-helper.sh;
+. tools/ak3-ug.sh && attributes;
 
 # Install scripts, modify ramdisk and write boot
 check_kernel_version;

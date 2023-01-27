@@ -27,8 +27,32 @@ remount_ro_vendor() {
 }
 
 # Remove UndergroundKernel scripts
-remove_vendor_scripts() { 
+remove_ug_scripts() { 
     rm -rf /vendor/etc/init/hw/underground;
+}
+
+# Backup and remove ROM init files
+backup_and_remove_rom_init() {
+    ui_print "Backing up init file...";
+    backup_file /vendor/etc/init/hw/init.gpuboost.rc;
+    backup_file /vendor/etc/init/hw/init.cpuboost.rc;
+    backup_file /vendor/etc/init/hw/init.spectrum.rc;
+    backup_file /vendor/etc/init/hw/init.parallax.rc;
+    rm /vendor/etc/init/hw/init.gpuboost.rc;
+    rm /vendor/etc/init/hw/init.cpuboost.rc;
+    rm /vendor/etc/init/hw/init.spectrum.rc;
+    rm /vendor/etc/init/hw/init.parallax.rc;
+    restore_file /vendor/etc/init/hw/init.target.rc;
+    backup_file /vendor/etc/init/hw/init.target.rc;
+}
+
+# Restore ROM init files
+restore_rom_init() {
+    restore_file /vendor/etc/init/hw/init.gpuboost.rc;
+    restore_file /vendor/etc/init/hw/init.cpuboost.rc;
+    restore_file /vendor/etc/init/hw/init.spectrum.rc;
+    restore_file /vendor/etc/init/hw/init.parallax.rc;
+    restore_file /vendor/etc/init/hw/init.target.rc;
 }
 
 # Get current spectrum profile
@@ -45,20 +69,4 @@ is_boot_completed() {
 get_android_version() {
 	android_version="$(file_getprop /system/build.prop ro.build.version.release)";
     return "$android_version";
-}
-
-# Set default spectrum property 
-check_or_set_spectrum() {
-    android="$(getprop ro.build.version.sdk)";
-    value="persist.spectrum.profile";
-
-    if [[ $android -ge 28 ]]; then
-        if (! (grep -q $value /data/property/persistent_properties)); then
-            setprop persist.spectrum.profile 0;
-        fi;
-    else
-        if [ ! -f /data/property/persist.spectrum.profile ]; then
-            setprop persist.spectrum.profile 0;
-        fi;
-    fi;
 }

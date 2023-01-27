@@ -1,7 +1,8 @@
 #!/system/bin/sh
-# Helper script by Zile995
+# Anykernel script by osm0sis and Zile995 @ xda-developers
 
-# Import helper functions
+# Import core and helper scripts.
+. tools/ak3-core.sh;
 . patch/underground/init.helper.sh;
 
 check_kernel_version() {
@@ -12,12 +13,6 @@ check_kernel_version() {
         ui_print "Your ROM is using a 4.9 kernel. Underground kernel can't be flashed!";
         exit 1;
     fi;
-}
-
-backup_init() {
-    ui_print "Backing up init file...";
-    restore_file /vendor/etc/init/hw/init.target.rc;
-    backup_file /vendor/etc/init/hw/init.target.rc;
 }
 
 copy_init_scripts() {
@@ -35,8 +30,8 @@ copy_init_scripts() {
         # Remove uneeded ramdisk files
         rm /tmp/anykernel/ramdisk/*;
   
-        # Make a backup of init.target.rc
-        backup_init;
+        # Make a backup of init.target.rc and other init files
+        backup_and_remove_rom_init; 
 
         # Add init configuration to init.target.rc
         append_file /vendor/etc/init/hw/init.target.rc "Underground" init.target.rc;
