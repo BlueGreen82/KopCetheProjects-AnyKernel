@@ -22,27 +22,17 @@ patch_vbmeta_flag=auto;
 
 # Set attributes
 attributes() {
-set_perm_recursive 0 0 755 755 $patch/*
+set_perm_recursive 0 0 755 755 $patch/*;
 set_perm_recursive 0 0 750 750 $ramdisk/init*;
 }
 
 # Import functions/variables and setup patching
 . tools/ak3-core.sh && attributes;
+. tools/ak3-helper.sh;
 
-# Import UndergroundKernel Anykernel helper
-. tools/ak3-helper.sh
-
-# Check kernel version
+# Install scripts, modify ramdisk and write boot
 check_kernel_version;
-
-# Vendor changes
-inject_init_scripts;
-
-# Dump boot
+copy_init_scripts;
 dump_boot;
-
-# Ramdisk changes
 modify_ramdisk;
-
-# Write boot
 write_boot;
